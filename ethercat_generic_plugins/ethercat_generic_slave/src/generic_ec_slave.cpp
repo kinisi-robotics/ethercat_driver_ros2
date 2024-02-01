@@ -30,6 +30,7 @@ size_t type2bytes(std::string type)
   } else if (type == "int64" || type == "uint64") {
     return 8;
   }
+  return 0;
 }
 
 namespace ethercat_generic_plugins
@@ -67,16 +68,16 @@ void GenericEcSlave::setup_syncs()
   if (sm_configs_.size() == 0) {
     syncs_.push_back({0, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE});
     syncs_.push_back({1, EC_DIR_INPUT, 0, NULL, EC_WD_DISABLE});
-    syncs_.push_back({2, EC_DIR_OUTPUT, rpdos_.size(), rpdos_.data(), EC_WD_ENABLE});
-    syncs_.push_back({3, EC_DIR_INPUT, tpdos_.size(), tpdos_.data(), EC_WD_DISABLE});
+    syncs_.push_back({2, EC_DIR_OUTPUT, static_cast<uint>(rpdos_.size()), rpdos_.data(), EC_WD_ENABLE});
+    syncs_.push_back({3, EC_DIR_INPUT, static_cast<uint>(tpdos_.size()), tpdos_.data(), EC_WD_DISABLE});
   } else {
     for (auto & sm : sm_configs_) {
       if (sm.pdo_name == "null") {
         syncs_.push_back({sm.index, sm.type, 0, NULL, sm.watchdog});
       } else if (sm.pdo_name == "rpdo") {
-        syncs_.push_back({sm.index, sm.type, rpdos_.size(), rpdos_.data(), sm.watchdog});
+        syncs_.push_back({sm.index, sm.type, static_cast<uint>(rpdos_.size()), rpdos_.data(), sm.watchdog});
       } else if (sm.pdo_name == "tpdo") {
-        syncs_.push_back({sm.index, sm.type, tpdos_.size(), tpdos_.data(), sm.watchdog});
+        syncs_.push_back({sm.index, sm.type, static_cast<uint>(tpdos_.size()), tpdos_.data(), sm.watchdog});
       }
     }
   }
@@ -241,14 +242,14 @@ void GenericEcSlave::setup_interface_mapping()
   for (auto & channel : pdo_channels_info_) {
     if (channel.pdo_type == ethercat_interface::TPDO) {
       if (paramters_.find("state_interface/" + channel.interface_name) != paramters_.end()) {
-        channel.interface_index =
-          std::stoi(paramters_["state_interface/" + channel.interface_name]);
+        channel.interface_index = std::stoi(paramters_["state_interface/" + channel.interface_name]);
+        std::cout << "TPDO - state_interface: state_interface/" << channel.interface_name << " index: " << channel.interface_index << std::endl;
       }
     }
     if (channel.pdo_type == ethercat_interface::RPDO) {
       if (paramters_.find("command_interface/" + channel.interface_name) != paramters_.end()) {
-        channel.interface_index = std::stoi(
-          paramters_["command_interface/" + channel.interface_name]);
+        channel.interface_index = std::stoi(paramters_["command_interface/" + channel.interface_name]);
+        std::cout << "RPDO - state_interface: state_interface/" << channel.interface_name << " index: " << channel.interface_index << std::endl;
       }
     }
 

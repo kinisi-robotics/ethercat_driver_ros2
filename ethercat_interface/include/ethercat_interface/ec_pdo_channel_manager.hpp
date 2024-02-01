@@ -70,7 +70,6 @@ public:
     } else {
       last_value = static_cast<double>(EC_READ_U8(domain_address) & data_mask);
     }
-    last_value = factor * last_value + offset;
     return last_value;
   }
 
@@ -110,19 +109,28 @@ public:
   {
     // update state interface
     if (pdo_type == TPDO) {
-      ec_read(domain_address);
+      ec_read(domain_address); // Read from tbe array
       if (interface_index >= 0) {
-        state_interface_ptr_->at(interface_index) = last_value;
+        state_interface_ptr_->at(interface_index) = factor * last_value + offset;
       }
     } else if (pdo_type == RPDO && allow_ec_write) {
       if (interface_index >= 0 &&
         !std::isnan(command_interface_ptr_->at(interface_index)) &&
         !override_command)
       {
+        //std::cout << "Slave: Interface: " << interface_index
+        //          << " - override_command: " << override_command
+        //          << " des pos = " << command_interface_ptr_->at(interface_index) << std::endl;
+
         ec_write(domain_address, factor * command_interface_ptr_->at(interface_index) + offset);
+        //double temp = (factor * command_interface_ptr_->at(interface_index) + offset);
+        //std::cout << "Slave: Interface = " << temp << " : "<< command_interface_ptr_->at(interface_index) << std::endl;
       } else {
         if (!std::isnan(default_value)) {
           ec_write(domain_address, default_value);
+          //if (int(default_value) >= 200) {
+          //  std::cout << "Slave: Default = " << default_value << std::endl;
+          //}
         }
       }
     }
@@ -211,15 +219,20 @@ public:
   uint8_t data_mask = 255;
   double default_value = std::numeric_limits<double>::quiet_NaN();
   int interface_index = -1;
+  // This is the Raw value from the slave
   double last_value = std::numeric_limits<double>::quiet_NaN();
   bool allow_ec_write = true;
-  bool override_command = false;
+  bool override_command = false; // If this is true we use the default value
+  bool last_override_command = false;
   double factor = 1;
   double offset = 0;
 
-private:
   std::vector<double> * command_interface_ptr_;
   std::vector<double> * state_interface_ptr_;
+
+private:
+  //std::vector<double> * command_interface_ptr_;
+  //std::vector<double> * state_interface_ptr_;
   uint8_t buffer_ = 0;
 
   int popcount(uint8_t x)
