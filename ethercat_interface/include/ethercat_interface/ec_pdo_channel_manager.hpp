@@ -113,7 +113,7 @@ public:
       if (interface_index >= 0) {
         // This is a hack so that we don't publish the joint position before we have a valid value.
         // The assumption is that being on Zero for the encoder is very unlickly.
-        if (int(last_value) == 0 && interface_index == 0) {
+        if (static_cast<int>(last_value) == 0 && interface_index == 0) {
           return;
         } 
         state_interface_ptr_->at(interface_index) = factor * last_value + offset;
