@@ -109,8 +109,13 @@ public:
   {
     // update state interface
     if (pdo_type == TPDO) {
-      ec_read(domain_address); // Read from tbe array
+      ec_read(domain_address);
       if (interface_index >= 0) {
+        // This is a hack so that we don't publish the joint position before we have a valid value.
+        // The assumption is that being on Zero for the encoder is very unlickly.
+        if (int(last_value) == 0 && interface_index == 0) {
+          return;
+        } 
         state_interface_ptr_->at(interface_index) = factor * last_value + offset;
       }
     } else if (pdo_type == RPDO && allow_ec_write) {
@@ -118,19 +123,10 @@ public:
         !std::isnan(command_interface_ptr_->at(interface_index)) &&
         !override_command)
       {
-        //std::cout << "Slave: Interface: " << interface_index
-        //          << " - override_command: " << override_command
-        //          << " des pos = " << command_interface_ptr_->at(interface_index) << std::endl;
-
         ec_write(domain_address, factor * command_interface_ptr_->at(interface_index) + offset);
-        //double temp = (factor * command_interface_ptr_->at(interface_index) + offset);
-        //std::cout << "Slave: Interface = " << temp << " : "<< command_interface_ptr_->at(interface_index) << std::endl;
       } else {
         if (!std::isnan(default_value)) {
           ec_write(domain_address, default_value);
-          //if (int(default_value) >= 200) {
-          //  std::cout << "Slave: Default = " << default_value << std::endl;
-          //}
         }
       }
     }
@@ -231,8 +227,8 @@ public:
   std::vector<double> * state_interface_ptr_;
 
 private:
-  //std::vector<double> * command_interface_ptr_;
-  //std::vector<double> * state_interface_ptr_;
+  // std::vector<double> * command_interface_ptr_;
+  // std::vector<double> * state_interface_ptr_;
   uint8_t buffer_ = 0;
 
   int popcount(uint8_t x)
