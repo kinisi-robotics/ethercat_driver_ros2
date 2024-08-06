@@ -116,14 +116,16 @@ public:
         if (static_cast<int>(last_value) == 0 && interface_index == 0) {
           return;
         } 
-        state_interface_ptr_->at(interface_index) = factor * last_value + offset;
+
+        state_interface_ptr_->at(interface_index) = factor * (last_value - offset);
+     
       }
     } else if (pdo_type == RPDO && allow_ec_write) {
       if (interface_index >= 0 &&
         !std::isnan(command_interface_ptr_->at(interface_index)) &&
         !override_command)
       {
-        ec_write(domain_address, factor * command_interface_ptr_->at(interface_index) + offset);
+        ec_write(domain_address, (factor * command_interface_ptr_->at(interface_index)) + offset);
       } else {
         if (!std::isnan(default_value)) {
           ec_write(domain_address, default_value);

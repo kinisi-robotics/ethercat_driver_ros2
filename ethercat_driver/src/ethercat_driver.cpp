@@ -261,12 +261,12 @@ CallbackReturn EthercatDriver::on_activate(
 {
   RCLCPP_INFO(rclcpp::get_logger("EthercatDriver"), "Starting ...please wait...");
   if (info_.hardware_parameters.find("control_frequency") == info_.hardware_parameters.end()) {
-    control_frequency_ = 100;
+    control_frequency_ = 100.0;
   } else {
     control_frequency_ = std::stod(info_.hardware_parameters["control_frequency"]);
   }
 
-  if (control_frequency_ < 0) {
+  if (control_frequency_ < 0.0) {
     RCLCPP_FATAL(
       rclcpp::get_logger("EthercatDriver"), "Invalid control frequency!");
     return CallbackReturn::ERROR;

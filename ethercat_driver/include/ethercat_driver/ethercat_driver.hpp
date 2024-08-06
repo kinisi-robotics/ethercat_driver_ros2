@@ -82,7 +82,7 @@ private:
   pluginlib::ClassLoader<ethercat_interface::EcSlave> ec_loader_{
     "ethercat_interface", "ethercat_interface::EcSlave"};
 
-  int control_frequency_;
+  double control_frequency_;
   ethercat_interface::EcMaster master_;
 };
 }  // namespace ethercat_driver
