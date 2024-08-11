@@ -92,7 +92,6 @@ void upload(
   response->sdo_return_message = return_stream.str();
 
   delete[] data.target;
-  RCLCPP_INFO(rclcpp::get_logger("ethercat_sdo_srv_server"), return_stream.str().c_str());
 }
 
 void download(
@@ -186,6 +185,8 @@ int main(int argc, char ** argv)
     "ethercat_manager/set_sdo",
     &ethercat_manager::download);
 
+  RCLCPP_INFO(rclcpp::get_logger("ethercat_sdo_srv_server"), "ethercat_sdo_srv_server: started");
+  
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;
