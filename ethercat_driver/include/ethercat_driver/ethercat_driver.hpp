@@ -83,6 +83,7 @@ private:
     "ethercat_interface", "ethercat_interface::EcSlave"};
 
   double control_frequency_;
+  int master_id_;
   ethercat_interface::EcMaster master_;
   std::mutex ec_mutex_;
   bool activated_;

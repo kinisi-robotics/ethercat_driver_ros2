@@ -54,14 +54,9 @@ EcMaster::DomainInfo::~DomainInfo()
 }
 
 
-EcMaster::EcMaster(const int master)
+EcMaster::EcMaster()
 {
-  master_ = ecrt_request_master(master);
-  if (master_ == NULL) {
-    printWarning("Failed to obtain master.");
-    return;
-  }
-  interval_ = 0;
+
 }
 
 EcMaster::~EcMaster()
@@ -74,6 +69,18 @@ EcMaster::~EcMaster()
       delete domain.second;
     }
   }
+}
+
+bool EcMaster::connect(const int master_id){
+  master_ = ecrt_request_master(master_id);
+  if (master_ == NULL) {
+    std::ostringstream oss;
+    oss << "Failed to obtain master with Master ID: " << master_id;
+    printWarning(oss.str().c_str());
+    return false;
+  }
+  interval_ = 0;
+  return true;
 }
 
 void EcMaster::addSlave(uint16_t alias, uint16_t position, EcSlave * slave)

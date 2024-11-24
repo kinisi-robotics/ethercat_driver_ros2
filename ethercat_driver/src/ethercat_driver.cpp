@@ -280,8 +280,21 @@ CallbackReturn EthercatDriver::on_activate(
     return CallbackReturn::ERROR;
   }
 
-  // start EC and wait until state operative
+  if (info_.hardware_parameters.find("master_id") == info_.hardware_parameters.end()) {
+    master_id_ = 0;
+  } else {
+    master_id_ = std::stoi(info_.hardware_parameters["master_id"]);
+  }
 
+  RCLCPP_INFO(rclcpp::get_logger("EthercatDriver"),"Connecting: Master ID: %d, Control Frequency: %.2f Hz", master_id_, control_frequency_);
+
+  // Connect to the ethercat master
+  if(!master_.connect(master_id_)){
+    RCLCPP_FATAL(rclcpp::get_logger("EthercatDriver"), "Can't connect to master!");
+    return CallbackReturn::ERROR;  
+  }
+
+  // start EC and wait until state operative
   master_.setCtrlFrequency(control_frequency_);
 
   for (auto i = 0ul; i < ec_modules_.size(); i++) {

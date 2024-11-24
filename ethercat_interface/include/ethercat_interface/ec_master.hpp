@@ -31,7 +31,7 @@ namespace ethercat_interface
 class EcMaster
 {
 public:
-  explicit EcMaster(const int master = 0);
+  explicit EcMaster();
   virtual ~EcMaster();
 
   /** \brief add a slave device to the master
@@ -44,6 +44,9 @@ public:
   /** \brief configure slave using SDO
     */
   int configSlaveSdo(uint16_t slave_position, SdoConfigEntry sdo_config, uint32_t * abort_code);
+
+  /** Connects to the master*/
+  bool connect(const int master_id);
 
   /** call after adding all slaves, and before update */
   bool activate();
@@ -157,7 +160,7 @@ private:
   {
     EcSlave * slave = NULL;
     ec_slave_config_t * config = NULL;
-    ec_slave_config_state_t config_state = {0};
+    ec_slave_config_state_t config_state = {};
   };
 
   std::vector<SlaveInfo> slave_info_;
