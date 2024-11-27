@@ -285,7 +285,6 @@ void EcMaster::update(uint32_t domain)
   // Initiate or process SDO requests
   for (auto &sdo_request : sdo_requests_) { // sdo_requests_ is a vector of EcSDORequest
     if (sdo_request->isUnsed()) {
-      std::cout << "isUnsed()" << std::endl;
       sdo_request->initiateRead();
     }
   }
@@ -335,12 +334,9 @@ void EcMaster::readData(uint32_t domain)
   // Process completed SDO requests
   for (auto &sdo_request : sdo_requests_) {
     if (sdo_request->isComplete()) {
-
       sdo_request->processData();
-
       // Optionally: Reset or re-initiate the request
       // sdo_request->initiateRead();
-
     }
   }
 
