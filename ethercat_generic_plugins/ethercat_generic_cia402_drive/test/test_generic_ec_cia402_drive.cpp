@@ -101,7 +101,7 @@ TEST_F(EcCiA402DriveTest, SlaveSetupDriveFromConfig)
 {
   SetUp();
   ASSERT_EQ(
-    plugin_->setup_from_config(YAML::Load(test_drive_config)),
+    plugin_->setupFromConfig(YAML::Load(test_drive_config)),
     true
   );
   ASSERT_EQ(plugin_->vendor_id_, 0x00000011);
@@ -127,7 +127,7 @@ TEST_F(EcCiA402DriveTest, SlaveSetupDriveFromConfig)
 TEST_F(EcCiA402DriveTest, SlaveSetupPdoChannels)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   std::vector<ec_pdo_entry_info_t> channels(
     plugin_->channels(),
     plugin_->channels() + plugin_->all_channels_.size()
@@ -142,7 +142,7 @@ TEST_F(EcCiA402DriveTest, SlaveSetupPdoChannels)
 TEST_F(EcCiA402DriveTest, SlaveSetupSyncs)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   plugin_->setup_syncs();
   std::vector<ec_sync_info_t> syncs(
     plugin_->syncs(),
@@ -165,7 +165,7 @@ TEST_F(EcCiA402DriveTest, SlaveSetupSyncs)
 TEST_F(EcCiA402DriveTest, SlaveSetupDomains)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   std::map<unsigned int, std::vector<unsigned int>> domains;
   plugin_->domains(domains);
 
@@ -182,7 +182,7 @@ TEST_F(EcCiA402DriveTest, EcReadTPDOToStateInterface)
   plugin_->state_interface_ptr_ = &state_interface;
   slave_paramters["state_interface/effort"] = "1";
   plugin_->paramters_ = slave_paramters;
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   plugin_->setup_interface_mapping();
   ASSERT_EQ(plugin_->pdo_channels_info_[8].interface_index, 1);
   uint8_t domain_address[2];
@@ -199,7 +199,7 @@ TEST_F(EcCiA402DriveTest, EcWriteRPDOFromCommandInterface)
   plugin_->command_interface_ptr_ = &command_interface;
   slave_paramters["command_interface/effort"] = "1";
   plugin_->paramters_ = slave_paramters;
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   plugin_->setup_interface_mapping();
   ASSERT_EQ(plugin_->pdo_channels_info_[2].interface_index, 1);
   plugin_->mode_of_operation_display_ = 10;
@@ -212,7 +212,7 @@ TEST_F(EcCiA402DriveTest, EcWriteRPDOFromCommandInterface)
 TEST_F(EcCiA402DriveTest, EcWriteRPDODefaultValue)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   plugin_->setup_interface_mapping();
   plugin_->mode_of_operation_display_ = 10;
   uint8_t domain_address[2];
@@ -226,7 +226,7 @@ TEST_F(EcCiA402DriveTest, EcWriteRPDODefaultValue)
 //   std::unordered_map<std::string, std::string> slave_paramters;
 //   std::vector<double> command_interface = {0, 1};
 //   plugin_->command_interface_ptr_ = &command_interface;
-//   plugin_->setup_from_config(YAML::Load(test_drive_config));
+//   plugin_->setupFromConfig(YAML::Load(test_drive_config));
 //   plugin_->setup_interface_mapping();
 //   plugin_->fault_reset_command_interface_index_ = 1;
 //   plugin_->state_ = STATE_FAULT;
@@ -258,7 +258,7 @@ TEST_F(EcCiA402DriveTest, SwitchModeOfOperation)
   slave_paramters["command_interface/mode_of_operation"] = "1";
   plugin_->paramters_ = slave_paramters;
   plugin_->command_interface_ptr_ = &command_interface;
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   plugin_->setup_interface_mapping();
   plugin_->is_operational_ = true;
   uint8_t domain_address[2];
@@ -280,7 +280,7 @@ TEST_F(EcCiA402DriveTest, EcWriteDefaultTargetPosition)
   slave_paramters["command_interface/mode_of_operation"] = "1";
   plugin_->paramters_ = slave_paramters;
   plugin_->command_interface_ptr_ = &command_interface;
-  plugin_->setup_from_config(YAML::Load(test_drive_config));
+  plugin_->setupFromConfig(YAML::Load(test_drive_config));
   plugin_->setup_interface_mapping();
   plugin_->is_operational_ = true;
   plugin_->mode_of_operation_display_ = 8;

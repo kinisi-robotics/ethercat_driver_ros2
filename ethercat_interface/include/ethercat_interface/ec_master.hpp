@@ -41,8 +41,7 @@ public:
     */
   void addSlave(uint16_t alias, uint16_t position, EcSlave * slave);
 
-  /** \brief configure slave using SDO
-    */
+  /** \brief configure slave using SDO */
   int configSlaveSdo(uint16_t slave_position, SdoConfigEntry sdo_config, uint32_t * abort_code);
 
   /** Connects to the master*/

@@ -70,9 +70,9 @@ protected:
   /** returns the control word that will take device from state to next desired state */
   uint16_t transition(DeviceState state, uint16_t control_word);
   /** set up of the drive configuration from yaml node*/
-  bool setup_from_config(YAML::Node drive_config);
+  bool setupFromConfig(YAML::Node drive_config);
   /** set up of the drive configuration from yaml file*/
-  bool setup_from_config_file(std::string config_file);
+  bool setupFromConfigFile(std::string config_file);
 };
 }  // namespace ethercat_generic_plugins
 

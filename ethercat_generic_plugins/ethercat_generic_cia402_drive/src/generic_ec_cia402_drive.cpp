@@ -116,7 +116,7 @@ bool EcCiA402Drive::setupSlave(
   paramters_ = slave_paramters;
 
   if (paramters_.find("slave_config") != paramters_.end()) {
-    if (!setup_from_config_file(paramters_["slave_config"])) {
+    if (!setupFromConfigFile(paramters_["slave_config"])) {
       return false;
     }
   } else {
@@ -138,9 +138,9 @@ bool EcCiA402Drive::setupSlave(
   return true;
 }
 
-bool EcCiA402Drive::setup_from_config(YAML::Node drive_config)
+bool EcCiA402Drive::setupFromConfig(YAML::Node drive_config)
 {
-  if (!GenericEcSlave::setup_from_config(drive_config)) {return false;}
+  if (!GenericEcSlave::setupFromConfig(drive_config)) {return false;}
   // additional configuration parameters for CiA402 Drives
   if (drive_config["auto_fault_reset"]) {
     auto_fault_reset_ = drive_config["auto_fault_reset"].as<bool>();
@@ -151,7 +151,7 @@ bool EcCiA402Drive::setup_from_config(YAML::Node drive_config)
   return true;
 }
 
-bool EcCiA402Drive::setup_from_config_file(std::string config_file)
+bool EcCiA402Drive::setupFromConfigFile(std::string config_file)
 {
   // Read drive configuration from YAML file
   try {
@@ -163,7 +163,7 @@ bool EcCiA402Drive::setup_from_config_file(std::string config_file)
     std::cerr << "EcCiA402Drive: failed to load drive configuration: " << ex.what() << std::endl;
     return false;
   }
-  if (!setup_from_config(slave_config_)) {
+  if (!setupFromConfig(slave_config_)) {
     return false;
   }
   return true;

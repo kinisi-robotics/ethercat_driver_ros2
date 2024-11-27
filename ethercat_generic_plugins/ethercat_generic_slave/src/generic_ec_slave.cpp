@@ -94,7 +94,7 @@ bool GenericEcSlave::setupSlave(
   paramters_ = slave_paramters;
 
   if (paramters_.find("slave_config") != paramters_.end()) {
-    if (!setup_from_config_file(paramters_["slave_config"])) {
+    if (!setupFromConfigFile(paramters_["slave_config"])) {
       return false;
     }
   } else {
@@ -108,7 +108,7 @@ bool GenericEcSlave::setupSlave(
   return true;
 }
 
-bool GenericEcSlave::setup_from_config(YAML::Node slave_config)
+bool GenericEcSlave::setupFromConfig(YAML::Node slave_config)
 {
   if (slave_config.size() != 0) {
     if (slave_config["vendor_id"]) {
@@ -219,7 +219,7 @@ bool GenericEcSlave::setup_from_config(YAML::Node slave_config)
   }
 }
 
-bool GenericEcSlave::setup_from_config_file(std::string config_file)
+bool GenericEcSlave::setupFromConfigFile(std::string config_file)
 {
   // Read drive configuration from YAML file
   try {
@@ -231,7 +231,7 @@ bool GenericEcSlave::setup_from_config_file(std::string config_file)
     std::cerr << "GenericEcSlave: failed to load drive configuration: " << ex.what() << std::endl;
     return false;
   }
-  if (!setup_from_config(slave_config_)) {
+  if (!setupFromConfig(slave_config_)) {
     return false;
   }
   return true;

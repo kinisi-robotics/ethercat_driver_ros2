@@ -105,7 +105,7 @@ TEST_F(GenericEcSlaveTest, SlaveSetupSlaveFromConfig)
 {
   SetUp();
   ASSERT_EQ(
-    plugin_->setup_from_config(YAML::Load(test_slave_config)),
+    plugin_->setupFromConfig(YAML::Load(test_slave_config)),
     true
   );
   ASSERT_EQ(plugin_->vendor_id_, 0x00000011);
@@ -132,7 +132,7 @@ TEST_F(GenericEcSlaveTest, SlaveSetupSlaveFromConfig)
 TEST_F(GenericEcSlaveTest, SlaveSetupPdoChannels)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   std::vector<ec_pdo_entry_info_t> channels(
     plugin_->channels(),
     plugin_->channels() + plugin_->all_channels_.size()
@@ -147,7 +147,7 @@ TEST_F(GenericEcSlaveTest, SlaveSetupPdoChannels)
 TEST_F(GenericEcSlaveTest, SlaveSetupSyncs)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   plugin_->setup_syncs();
   std::vector<ec_sync_info_t> syncs(
     plugin_->syncs(),
@@ -170,7 +170,7 @@ TEST_F(GenericEcSlaveTest, SlaveSetupSyncs)
 TEST_F(GenericEcSlaveTest, SlaveSetupDomains)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   std::map<unsigned int, std::vector<unsigned int>> domains;
   plugin_->domains(domains);
 
@@ -187,7 +187,7 @@ TEST_F(GenericEcSlaveTest, EcReadTPDOToStateInterface)
   plugin_->state_interface_ptr_ = &state_interface;
   slave_paramters["state_interface/effort"] = "1";
   plugin_->paramters_ = slave_paramters;
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   plugin_->setup_interface_mapping();
   ASSERT_EQ(plugin_->pdo_channels_info_[8].interface_index, 1);
   uint8_t domain_address[2];
@@ -204,7 +204,7 @@ TEST_F(GenericEcSlaveTest, EcWriteRPDOFromCommandInterface)
   plugin_->command_interface_ptr_ = &command_interface;
   slave_paramters["command_interface/effort"] = "1";
   plugin_->paramters_ = slave_paramters;
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   plugin_->setup_interface_mapping();
   ASSERT_EQ(plugin_->pdo_channels_info_[2].interface_index, 1);
   uint8_t domain_address[2];
@@ -216,7 +216,7 @@ TEST_F(GenericEcSlaveTest, EcWriteRPDOFromCommandInterface)
 TEST_F(GenericEcSlaveTest, EcWriteRPDODefaultValue)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   plugin_->setup_interface_mapping();
   uint8_t domain_address[2];
   plugin_->processData(2, domain_address);
@@ -227,7 +227,7 @@ TEST_F(GenericEcSlaveTest, EcWriteRPDODefaultValue)
 TEST_F(GenericEcSlaveTest, SlaveSetupSDOConfig)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   ASSERT_EQ(plugin_->sdo_config[0].index, 0x60C2);
   ASSERT_EQ(plugin_->sdo_config[0].sub_index, 1);
   ASSERT_EQ(plugin_->sdo_config[1].sub_index, 2);
@@ -241,7 +241,7 @@ TEST_F(GenericEcSlaveTest, SlaveSetupSDOConfig)
 TEST_F(GenericEcSlaveTest, SlaveSetupSyncManagerConfig)
 {
   SetUp();
-  plugin_->setup_from_config(YAML::Load(test_slave_config));
+  plugin_->setupFromConfig(YAML::Load(test_slave_config));
   ASSERT_EQ(plugin_->sm_configs_.size(), 4);
   ASSERT_EQ(plugin_->sm_configs_[0].index, 0);
   ASSERT_EQ(plugin_->sm_configs_[0].type, EC_DIR_OUTPUT);
