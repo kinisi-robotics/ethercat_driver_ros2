@@ -22,11 +22,73 @@
 #include <vector>
 #include <map>
 #include <chrono>
+#include <cstring>
+
 #include "ethercat_interface/ec_slave.hpp"
+
+
 
 
 namespace ethercat_interface
 {
+
+class SDORequest {
+public:
+    SDORequest(ec_slave_config_t *slave_config, uint16_t index, uint8_t subindex, size_t size, EcSlave* slave)
+        : request_(ecrt_slave_config_create_sdo_request(slave_config, index, subindex, size)),
+          size_(size), 
+          index_(index), 
+          subindex_(subindex),
+          slave_(slave)
+    {
+        if (!request_) {
+            throw std::runtime_error("Failed to create SDO request");
+        }
+    }
+
+    ~SDORequest() {
+    }
+
+    void initiateRead() {
+        ecrt_sdo_request_read(request_);
+    }
+
+    bool isComplete() const {
+        return ecrt_sdo_request_state(request_) == EC_REQUEST_SUCCESS;
+    }
+
+    bool isUnsed() const {
+        return ecrt_sdo_request_state(request_) == EC_REQUEST_UNUSED; // Change to EC_REQUEST_BUSY 
+    }
+
+
+    const void *getData() const {
+        return ecrt_sdo_request_data(request_);
+        // uint16_t value = EC_READ_U16(ecrt_sdo_request_data(sdo)));
+    }
+
+    void processData(){
+      // Process the data
+      const void* data = ecrt_sdo_request_data(request_);
+      uint16_t value;
+      memcpy(&value, data, sizeof(uint16_t));
+
+      slave_->processSDO(index_, value);
+    }
+
+    uint16_t getIndex() const { return index_; }
+    uint8_t getSubindex() const { return subindex_; }
+
+    EcSlave* slave_;
+
+private:
+    ec_sdo_request_t *request_;
+    size_t size_;
+    uint16_t index_;
+    uint8_t subindex_;
+
+};
+
 
 class EcMaster
 {
@@ -92,12 +154,15 @@ public:
   void readData(uint32_t domain = 0);
   void writeData(uint32_t domain = 0);
 
+
 private:
   /** true if running */
   volatile bool running_ = false;
 
   /** start and current time */
   std::chrono::time_point<std::chrono::system_clock> start_t_, curr_t_;
+
+  std::vector<std::unique_ptr<SDORequest>> sdo_requests_;
 
   // EtherCAT Control
 

@@ -25,6 +25,7 @@
 #include <string.h>
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 #define EC_NEWTIMEVAL2NANO(TV) \
   (((TV).tv_sec - 946684800ULL) * 1000000000ULL + (TV).tv_nsec)
@@ -115,6 +116,11 @@ void EcMaster::addSlave(uint16_t alias, uint16_t position, EcSlave * slave)
 
   slave_info_.push_back(slave_info);
 
+  // Add the sdo's
+  sdo_requests_.emplace_back(
+    std::make_unique<SDORequest>(slave_info.config, 0x22A2, 0x00, 2, slave_info.slave)
+  );
+
   // check if slave has pdos
   size_t num_syncs = slave->syncSize();
   const ec_sync_info_t * syncs = slave->syncs();
@@ -151,24 +157,6 @@ void EcMaster::addSlave(uint16_t alias, uint16_t position, EcSlave * slave)
       iter.second, domain_info,
       slave);
   }
-}
-
-int EcMaster::configSlaveSdo(
-  uint16_t slave_position, SdoConfigEntry sdo_config,
-  uint32_t * abort_code)
-{
-  uint8_t buffer[8];
-  sdo_config.buffer_write(buffer);
-  int ret = ecrt_master_sdo_download(
-    master_,
-    slave_position,
-    sdo_config.index,
-    sdo_config.sub_index,
-    buffer,
-    sdo_config.data_size(),
-    abort_code
-  );
-  return ret;
 }
 
 void EcMaster::registerPDOInDomain(
@@ -293,6 +281,15 @@ void EcMaster::update(uint32_t domain)
     }
   }
 
+
+  // Initiate or process SDO requests
+  for (auto &sdo_request : sdo_requests_) { // sdo_requests_ is a vector of EcSDORequest
+    if (sdo_request->isUnsed()) {
+      std::cout << "isUnsed()" << std::endl;
+      sdo_request->initiateRead();
+    }
+  }
+
   struct timespec t;
 
   clock_gettime(CLOCK_REALTIME, &t);
@@ -335,7 +332,37 @@ void EcMaster::readData(uint32_t domain)
     }
   }
 
+  // Process completed SDO requests
+  for (auto &sdo_request : sdo_requests_) {
+    if (sdo_request->isComplete()) {
+
+      sdo_request->processData();
+
+      // Optionally: Reset or re-initiate the request
+      // sdo_request->initiateRead();
+
+    }
+  }
+
   ++update_counter_;
+}
+
+int EcMaster::configSlaveSdo(
+  uint16_t slave_position, SdoConfigEntry sdo_config,
+  uint32_t * abort_code)
+{
+  uint8_t buffer[8];
+  sdo_config.buffer_write(buffer);
+  int ret = ecrt_master_sdo_download(
+    master_,
+    slave_position,
+    sdo_config.index,
+    sdo_config.sub_index,
+    buffer,
+    sdo_config.data_size(),
+    abort_code
+  );
+  return ret;
 }
 
 void EcMaster::writeData(uint32_t domain)
