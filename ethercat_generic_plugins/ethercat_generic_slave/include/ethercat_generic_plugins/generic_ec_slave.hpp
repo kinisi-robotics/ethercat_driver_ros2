@@ -61,9 +61,9 @@ protected:
   uint32_t assign_activate_ = 0;
 
   /** set up of the drive configuration from yaml node*/
-  bool setup_from_config(YAML::Node slave_config);
+  bool setupFromConfig(YAML::Node slave_config);
   /** set up of the drive configuration from yaml file*/
-  bool setup_from_config_file(std::string config_file);
+  bool setupFromConfigFile(std::string config_file);
 
   void setup_syncs();
 

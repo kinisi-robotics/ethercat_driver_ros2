@@ -30,7 +30,7 @@ bool EcCiA402Drive::initialized() const {return initialized_;}
 void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
 {
   // Special case: ControlWord
-  if (pdo_channels_info_[index].index == CiA402D_RPDO_CONTROLWORD) {
+  if (pdo_channels_info_[index].index == RPDO_CONTROLWORD) {
     if (is_operational_) {
       if (fault_reset_command_interface_index_ >= 0) {
         if (command_interface_ptr_->at(fault_reset_command_interface_index_) == 0) {
@@ -54,7 +54,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   }
 
   // setup current position as default position
-  if (pdo_channels_info_[index].index == CiA402D_RPDO_POSITION) {
+  if (pdo_channels_info_[index].index == RPDO_POSITION) {
     if (mode_of_operation_display_ != ModeOfOperation::MODE_NO_MODE) {
       pdo_channels_info_[index].default_value =
         pdo_channels_info_[index].factor * last_position_ +
@@ -65,7 +65,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   }
 
   // setup mode of operation
-  if (pdo_channels_info_[index].index == CiA402D_RPDO_MODE_OF_OPERATION) {
+  if (pdo_channels_info_[index].index == RPDO_MODE_OF_OPERATION) {
     if (mode_of_operation_ >= 0 && mode_of_operation_ <= 10) {
       pdo_channels_info_[index].default_value = mode_of_operation_;
     }
@@ -74,16 +74,16 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   pdo_channels_info_[index].ec_update(domain_address);
 
   // get mode_of_operation_display_
-  if (pdo_channels_info_[index].index == CiA402D_TPDO_MODE_OF_OPERATION_DISPLAY) {
+  if (pdo_channels_info_[index].index == TPDO_MODE_OF_OPERATION_DISPLAY) {
     mode_of_operation_display_ = pdo_channels_info_[index].last_value;
   }
 
-  if (pdo_channels_info_[index].index == CiA402D_TPDO_POSITION) {
+  if (pdo_channels_info_[index].index == TPDO_POSITION) {
     last_position_ = pdo_channels_info_[index].last_value;
   }
 
   // Special case: StatusWord
-  if (pdo_channels_info_[index].index == CiA402D_TPDO_STATUSWORD) {
+  if (pdo_channels_info_[index].index == TPDO_STATUSWORD) {
     status_word_ = pdo_channels_info_[index].last_value;
   }
 
@@ -116,7 +116,7 @@ bool EcCiA402Drive::setupSlave(
   paramters_ = slave_paramters;
 
   if (paramters_.find("slave_config") != paramters_.end()) {
-    if (!setup_from_config_file(paramters_["slave_config"])) {
+    if (!setupFromConfigFile(paramters_["slave_config"])) {
       return false;
     }
   } else {
@@ -138,9 +138,9 @@ bool EcCiA402Drive::setupSlave(
   return true;
 }
 
-bool EcCiA402Drive::setup_from_config(YAML::Node drive_config)
+bool EcCiA402Drive::setupFromConfig(YAML::Node drive_config)
 {
-  if (!GenericEcSlave::setup_from_config(drive_config)) {return false;}
+  if (!GenericEcSlave::setupFromConfig(drive_config)) {return false;}
   // additional configuration parameters for CiA402 Drives
   if (drive_config["auto_fault_reset"]) {
     auto_fault_reset_ = drive_config["auto_fault_reset"].as<bool>();
@@ -151,7 +151,7 @@ bool EcCiA402Drive::setup_from_config(YAML::Node drive_config)
   return true;
 }
 
-bool EcCiA402Drive::setup_from_config_file(std::string config_file)
+bool EcCiA402Drive::setupFromConfigFile(std::string config_file)
 {
   // Read drive configuration from YAML file
   try {
@@ -163,7 +163,7 @@ bool EcCiA402Drive::setup_from_config_file(std::string config_file)
     std::cerr << "EcCiA402Drive: failed to load drive configuration: " << ex.what() << std::endl;
     return false;
   }
-  if (!setup_from_config(slave_config_)) {
+  if (!setupFromConfig(slave_config_)) {
     return false;
   }
   return true;

@@ -81,7 +81,8 @@ void GenericEcSlave::setup_syncs()
       }
     }
   }
-  syncs_.push_back({0xff});
+  ec_sync_info_t sync_empty = {0xff, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE};
+  syncs_.push_back(sync_empty); // Sentinel to mark the end of the sync array
 }
 
 bool GenericEcSlave::setupSlave(
@@ -94,7 +95,7 @@ bool GenericEcSlave::setupSlave(
   paramters_ = slave_paramters;
 
   if (paramters_.find("slave_config") != paramters_.end()) {
-    if (!setup_from_config_file(paramters_["slave_config"])) {
+    if (!setupFromConfigFile(paramters_["slave_config"])) {
       return false;
     }
   } else {
@@ -108,7 +109,7 @@ bool GenericEcSlave::setupSlave(
   return true;
 }
 
-bool GenericEcSlave::setup_from_config(YAML::Node slave_config)
+bool GenericEcSlave::setupFromConfig(YAML::Node slave_config)
 {
   if (slave_config.size() != 0) {
     if (slave_config["vendor_id"]) {
@@ -174,7 +175,7 @@ bool GenericEcSlave::setup_from_config(YAML::Node slave_config)
         rpdos_.push_back(
           {
             slave_config["rpdo"][i]["index"].as<uint16_t>(),
-            rpdo_channels_size,
+            static_cast<unsigned int>(rpdo_channels_size),
             all_channels_.data() + channels_nbr
           }
         );
@@ -196,7 +197,7 @@ bool GenericEcSlave::setup_from_config(YAML::Node slave_config)
         tpdos_.push_back(
           {
             slave_config["tpdo"][i]["index"].as<uint16_t>(),
-            tpdo_channels_size,
+            static_cast<unsigned int>(tpdo_channels_size),
             all_channels_.data() + channels_nbr
           }
         );
@@ -219,7 +220,7 @@ bool GenericEcSlave::setup_from_config(YAML::Node slave_config)
   }
 }
 
-bool GenericEcSlave::setup_from_config_file(std::string config_file)
+bool GenericEcSlave::setupFromConfigFile(std::string config_file)
 {
   // Read drive configuration from YAML file
   try {
@@ -231,7 +232,7 @@ bool GenericEcSlave::setup_from_config_file(std::string config_file)
     std::cerr << "GenericEcSlave: failed to load drive configuration: " << ex.what() << std::endl;
     return false;
   }
-  if (!setup_from_config(slave_config_)) {
+  if (!setupFromConfig(slave_config_)) {
     return false;
   }
   return true;

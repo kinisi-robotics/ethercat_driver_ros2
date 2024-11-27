@@ -95,7 +95,7 @@ public:
 
   uint16_t index;
   uint8_t sub_index;
-  std::string data_type;
+  std::string data_type;  
   int data;
 
 private:
@@ -110,6 +110,7 @@ private:
     } else if (type == "int64" || type == "uint64") {
       return 8;
     }
+    return 0;
   }
 };
 
