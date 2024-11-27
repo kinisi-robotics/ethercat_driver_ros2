@@ -15,15 +15,15 @@
 #ifndef ETHERCAT_GENERIC_PLUGINS__CIA402_COMMON_DEFS_HPP_
 #define ETHERCAT_GENERIC_PLUGINS__CIA402_COMMON_DEFS_HPP_
 
-#define CiA402D_RPDO_CONTROLWORD  ((uint16_t) 0x6040)
-#define CiA402D_RPDO_POSITION  ((uint16_t) 0x607a)
-#define CiA402D_RPDO_VELOCITY  ((uint16_t) 0x60ff)
-#define CiA402D_RPDO_EFFORT  ((uint16_t) 0x6071)
-#define CiA402D_RPDO_MODE_OF_OPERATION  ((uint16_t) 0x6060)
+#define RPDO_CONTROLWORD  ((uint16_t) 0x6040)
+#define RPDO_POSITION  ((uint16_t) 0x607a)
+#define RPDO_VELOCITY  ((uint16_t) 0x60ff)
+#define RPDO_EFFORT  ((uint16_t) 0x6071)
+#define RPDO_MODE_OF_OPERATION  ((uint16_t) 0x6060)
 
-#define CiA402D_TPDO_POSITION ((uint16_t) 0x6064)
-#define CiA402D_TPDO_STATUSWORD  ((uint16_t) 0x6041)
-#define CiA402D_TPDO_MODE_OF_OPERATION_DISPLAY  ((uint16_t) 0x6061)
+#define TPDO_POSITION ((uint16_t) 0x6064)
+#define TPDO_STATUSWORD  ((uint16_t) 0x6041)
+#define TPDO_MODE_OF_OPERATION_DISPLAY  ((uint16_t) 0x6061)
 
 #include <map>
 #include <string>

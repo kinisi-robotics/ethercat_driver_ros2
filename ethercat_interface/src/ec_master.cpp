@@ -41,7 +41,7 @@ EcMaster::DomainInfo::DomainInfo(ec_master_t * master)
     return;
   }
 
-  const ec_pdo_entry_reg_t empty = {0};
+  const ec_pdo_entry_reg_t empty = {0, 0, 0, 0, 0, 0, nullptr, nullptr};
   domain_regs.push_back(empty);
 }
 
@@ -62,9 +62,6 @@ EcMaster::EcMaster()
 
 EcMaster::~EcMaster()
 {
-  for (SlaveInfo & slave : slave_info_) {
-    //
-  }
   for (auto & domain : domain_info_) {
     if (domain.second != NULL) {
       delete domain.second;
@@ -206,7 +203,7 @@ void EcMaster::registerPDOInDomain(
   }
 
   // set the last element to null
-  ec_pdo_entry_reg_t empty = {0};
+  ec_pdo_entry_reg_t empty = {0, 0, 0, 0, 0, 0, nullptr, nullptr};
   domain_info->domain_regs.back() = empty;
 }
 
@@ -285,7 +282,6 @@ void EcMaster::update(uint32_t domain)
   // Initiate or process SDO requests
   for (auto &sdo_request : sdo_requests_) { // sdo_requests_ is a vector of EcSDORequest
     if (sdo_request->isUnsed()) {
-      std::cout << "isUnsed()" << std::endl;
       sdo_request->initiateRead();
     }
   }
@@ -335,12 +331,9 @@ void EcMaster::readData(uint32_t domain)
   // Process completed SDO requests
   for (auto &sdo_request : sdo_requests_) {
     if (sdo_request->isComplete()) {
-
       sdo_request->processData();
-
       // Optionally: Reset or re-initiate the request
       // sdo_request->initiateRead();
-
     }
   }
 
@@ -475,7 +468,7 @@ void EcMaster::setThreadRealTime()
   /* Pre-fault our stack
       8*1024 is the maximum stack size
       which is guaranteed safe to access without faulting */
-  int MAX_SAFE_STACK = 8 * 1024;
+  constexpr int MAX_SAFE_STACK = 8 * 1024;
   unsigned char dummy[MAX_SAFE_STACK];
   memset(dummy, 0, MAX_SAFE_STACK);
 }
