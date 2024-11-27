@@ -30,7 +30,7 @@ bool EcCiA402Drive::initialized() const {return initialized_;}
 void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
 {
   // Special case: ControlWord
-  if (pdo_channels_info_[index].index == CiA402D_RPDO_CONTROLWORD) {
+  if (pdo_channels_info_[index].index == RPDO_CONTROLWORD) {
     if (is_operational_) {
       if (fault_reset_command_interface_index_ >= 0) {
         if (command_interface_ptr_->at(fault_reset_command_interface_index_) == 0) {
@@ -54,7 +54,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   }
 
   // setup current position as default position
-  if (pdo_channels_info_[index].index == CiA402D_RPDO_POSITION) {
+  if (pdo_channels_info_[index].index == RPDO_POSITION) {
     if (mode_of_operation_display_ != ModeOfOperation::MODE_NO_MODE) {
       pdo_channels_info_[index].default_value =
         pdo_channels_info_[index].factor * last_position_ +
@@ -65,7 +65,7 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   }
 
   // setup mode of operation
-  if (pdo_channels_info_[index].index == CiA402D_RPDO_MODE_OF_OPERATION) {
+  if (pdo_channels_info_[index].index == RPDO_MODE_OF_OPERATION) {
     if (mode_of_operation_ >= 0 && mode_of_operation_ <= 10) {
       pdo_channels_info_[index].default_value = mode_of_operation_;
     }
@@ -74,16 +74,16 @@ void EcCiA402Drive::processData(size_t index, uint8_t * domain_address)
   pdo_channels_info_[index].ec_update(domain_address);
 
   // get mode_of_operation_display_
-  if (pdo_channels_info_[index].index == CiA402D_TPDO_MODE_OF_OPERATION_DISPLAY) {
+  if (pdo_channels_info_[index].index == TPDO_MODE_OF_OPERATION_DISPLAY) {
     mode_of_operation_display_ = pdo_channels_info_[index].last_value;
   }
 
-  if (pdo_channels_info_[index].index == CiA402D_TPDO_POSITION) {
+  if (pdo_channels_info_[index].index == TPDO_POSITION) {
     last_position_ = pdo_channels_info_[index].last_value;
   }
 
   // Special case: StatusWord
-  if (pdo_channels_info_[index].index == CiA402D_TPDO_STATUSWORD) {
+  if (pdo_channels_info_[index].index == TPDO_STATUSWORD) {
     status_word_ = pdo_channels_info_[index].last_value;
   }
 
