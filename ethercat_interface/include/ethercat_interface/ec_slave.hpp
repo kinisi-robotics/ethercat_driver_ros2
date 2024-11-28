@@ -66,7 +66,7 @@ public:
 
   std::vector<SdoConfigEntry> sdo_config;
 
-  virtual void processSDO(uint16_t index, uint16_t data);
+  virtual void processSDO(uint16_t index, uint16_t data) {}
 
 protected:
   std::vector<double> * state_interface_ptr_;

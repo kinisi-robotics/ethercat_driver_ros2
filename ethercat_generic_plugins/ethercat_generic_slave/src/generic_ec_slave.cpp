@@ -81,8 +81,7 @@ void GenericEcSlave::setup_syncs()
       }
     }
   }
-  ec_sync_info_t sync_empty = {0xff, EC_DIR_OUTPUT, 0, NULL, EC_WD_DISABLE};
-  syncs_.push_back(sync_empty); // Sentinel to mark the end of the sync array
+  syncs_.push_back({0xff});
 }
 
 bool GenericEcSlave::setupSlave(
@@ -175,7 +174,7 @@ bool GenericEcSlave::setupFromConfig(YAML::Node slave_config)
         rpdos_.push_back(
           {
             slave_config["rpdo"][i]["index"].as<uint16_t>(),
-            static_cast<unsigned int>(rpdo_channels_size),
+            rpdo_channels_size,
             all_channels_.data() + channels_nbr
           }
         );
@@ -197,7 +196,7 @@ bool GenericEcSlave::setupFromConfig(YAML::Node slave_config)
         tpdos_.push_back(
           {
             slave_config["tpdo"][i]["index"].as<uint16_t>(),
-            static_cast<unsigned int>(tpdo_channels_size),
+            tpdo_channels_size,
             all_channels_.data() + channels_nbr
           }
         );
