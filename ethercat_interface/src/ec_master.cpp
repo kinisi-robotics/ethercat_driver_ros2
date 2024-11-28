@@ -62,9 +62,6 @@ EcMaster::EcMaster()
 
 EcMaster::~EcMaster()
 {
-  for (SlaveInfo & slave : slave_info_) {
-    //
-  }
   for (auto & domain : domain_info_) {
     if (domain.second != NULL) {
       delete domain.second;
