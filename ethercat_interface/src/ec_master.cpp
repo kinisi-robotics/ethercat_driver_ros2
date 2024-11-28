@@ -468,7 +468,7 @@ void EcMaster::setThreadRealTime()
   /* Pre-fault our stack
       8*1024 is the maximum stack size
       which is guaranteed safe to access without faulting */
-  int MAX_SAFE_STACK = 8 * 1024;
+  constexpr int MAX_SAFE_STACK = 8 * 1024;
   unsigned char dummy[MAX_SAFE_STACK];
   memset(dummy, 0, MAX_SAFE_STACK);
 }
