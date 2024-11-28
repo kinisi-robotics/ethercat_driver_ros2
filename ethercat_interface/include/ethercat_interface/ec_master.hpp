@@ -58,9 +58,8 @@ public:
     }
 
     bool isUnsed() const {
-        return ecrt_sdo_request_state(request_) == EC_REQUEST_UNUSED; // Change to EC_REQUEST_BUSY 
+        return ecrt_sdo_request_state(request_) != EC_REQUEST_BUSY;
     }
-
 
     const void *getData() const {
         return ecrt_sdo_request_data(request_);
@@ -74,19 +73,18 @@ public:
       memcpy(&value, data, sizeof(uint16_t));
 
       slave_->processSDO(index_, value);
+      std::cout << "1" << std::endl;
     }
 
     uint16_t getIndex() const { return index_; }
     uint8_t getSubindex() const { return subindex_; }
-
-    EcSlave* slave_;
 
 private:
     ec_sdo_request_t *request_;
     size_t size_;
     uint16_t index_;
     uint8_t subindex_;
-
+    EcSlave* slave_;
 };
 
 
