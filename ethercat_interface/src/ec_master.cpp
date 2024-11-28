@@ -41,7 +41,7 @@ EcMaster::DomainInfo::DomainInfo(ec_master_t * master)
     return;
   }
 
-  const ec_pdo_entry_reg_t empty = {0};
+  const ec_pdo_entry_reg_t empty = {0, 0, 0, 0, 0, 0, nullptr, nullptr};
   domain_regs.push_back(empty);
 }
 
@@ -206,7 +206,7 @@ void EcMaster::registerPDOInDomain(
   }
 
   // set the last element to null
-  ec_pdo_entry_reg_t empty = {0};
+  ec_pdo_entry_reg_t empty = {0, 0, 0, 0, 0, 0, nullptr, nullptr};
   domain_info->domain_regs.back() = empty;
 }
 
