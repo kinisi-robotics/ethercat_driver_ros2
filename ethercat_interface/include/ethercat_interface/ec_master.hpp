@@ -33,7 +33,7 @@ namespace ethercat_interface
 {
 
 class SDORequest {
-public:
+  public:
     SDORequest(ec_slave_config_t *slave_config, uint16_t index, uint8_t subindex, size_t size, EcSlave* slave)
         : request_(ecrt_slave_config_create_sdo_request(slave_config, index, subindex, size)),
           size_(size), 
@@ -79,14 +79,12 @@ public:
     uint16_t getIndex() const { return index_; }
     uint8_t getSubindex() const { return subindex_; }
 
-    EcSlave* slave_;
-
-private:
+  private:
     ec_sdo_request_t *request_;
     size_t size_;
     uint16_t index_;
     uint8_t subindex_;
-
+    EcSlave* slave_;
 };
 
 
