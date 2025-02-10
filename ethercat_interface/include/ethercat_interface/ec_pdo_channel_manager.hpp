@@ -120,7 +120,7 @@ public:
         state_interface_ptr_->at(interface_index) = factor * (last_value - offset);
      
       }
-    } else if (pdo_type == RPDO && allow_ec_write) {
+    } else if (pdo_type == RPDO) {
       if (interface_index >= 0 &&
         !std::isnan(command_interface_ptr_->at(interface_index)) &&
         !override_command)
@@ -219,7 +219,6 @@ public:
   int interface_index = -1;
   // This is the Raw value from the slave
   double last_value = std::numeric_limits<double>::quiet_NaN();
-  bool allow_ec_write = true;
   bool override_command = false; // If this is true we use the default value
   bool last_override_command = false;
   double factor = 1;
