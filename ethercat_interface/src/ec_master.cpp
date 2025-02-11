@@ -115,7 +115,7 @@ void EcMaster::addSlave(uint16_t alias, uint16_t position, EcSlave * slave)
 
   // Add the sdo's
   sdo_requests_.emplace_back(
-    std::make_unique<SDORequest>(slave_info.config, 0x22A2, 0x00, 2, slave_info.slave)
+    std::make_unique<SDORequest>(slave_info.config, 0x22A2, 0x00, 2, slave_info.slave, 1000)
   );
 
   // check if slave has pdos
@@ -194,12 +194,12 @@ void EcMaster::registerPDOInDomain(
 
 
     // print the domain pdo entry
-    std::cout << "{" << pdo_reg.alias << ", " << pdo_reg.position;
-    std::cout << ", 0x" << std::hex << pdo_reg.vendor_id;
-    std::cout << ", 0x" << std::hex << pdo_reg.product_code;
-    std::cout << ", 0x" << std::hex << pdo_reg.index;
-    std::cout << ", 0x" << std::hex << static_cast<int>(pdo_reg.subindex);
-    std::cout << "}" << std::dec << std::endl;
+    // std::cout << "{" << pdo_reg.alias << ", " << pdo_reg.position;
+    // std::cout << ", 0x" << std::hex << pdo_reg.vendor_id;
+    // std::cout << ", 0x" << std::hex << pdo_reg.product_code;
+    // std::cout << ", 0x" << std::hex << pdo_reg.index;
+    // std::cout << ", 0x" << std::hex << static_cast<int>(pdo_reg.subindex);
+    // std::cout << "}" << std::dec << std::endl;
   }
 
   // set the last element to null
@@ -278,13 +278,6 @@ void EcMaster::update(uint32_t domain)
     }
   }
 
-  // Initiate or process SDO requests
-  for (auto &sdo_request : sdo_requests_) {
-    if (sdo_request->isUnsed()) {
-      sdo_request->initiateRead();
-    }
-  }
-
   struct timespec t;
 
   clock_gettime(CLOCK_REALTIME, &t);
@@ -329,9 +322,18 @@ void EcMaster::readData(uint32_t domain)
 
   // Process completed SDO requests
   for (auto &sdo_request : sdo_requests_) {
-    if (sdo_request->isComplete()) {
-      sdo_request->processData();
-      sdo_request->initiateRead();
+    // Only send a request at the set frequency
+    if (sdo_request->timedSend()) {
+      // Check to make sure it's not in use
+      if (sdo_request->isUnsed()) {
+        // Send request
+        sdo_request->initiateRead();
+      }
+      // Check that we have something to process
+      if (sdo_request->isComplete()) {
+        // Update the ros2 controller
+        sdo_request->processData();
+      }
     }
   }
 

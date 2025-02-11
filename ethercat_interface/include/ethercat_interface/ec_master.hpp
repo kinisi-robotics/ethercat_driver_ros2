@@ -23,6 +23,8 @@
 #include <map>
 #include <chrono>
 #include <cstring>
+#include <random>
+
 
 #include "ethercat_interface/ec_slave.hpp"
 
@@ -34,19 +36,31 @@ namespace ethercat_interface
 
 class SDORequest {
   public:
-    SDORequest(ec_slave_config_t *slave_config, uint16_t index, uint8_t subindex, size_t size, EcSlave* slave)
+    SDORequest(ec_slave_config_t *slave_config, uint16_t index, uint8_t subindex, size_t size, EcSlave* slave, int frequency)
         : request_(ecrt_slave_config_create_sdo_request(slave_config, index, subindex, size)),
           size_(size), 
           index_(index), 
           subindex_(subindex),
-          slave_(slave)
+          slave_(slave),
+          frequency_(frequency)
     {
-        if (!request_) {
-            throw std::runtime_error("Failed to create SDO request");
-        }
+      if (!request_) {
+        throw std::runtime_error("Failed to create SDO request");
+      }
+
+      // we use a random send for the counter so that the SDO requests are not all sent at the same time
+      std::random_device rd;
+      std::uniform_int_distribution<int> dist(10, frequency_);
+      frequency_counter_ = dist(rd);
     }
 
     ~SDORequest() {
+    }
+
+    // This is for controlling when we send the SDO request
+    bool timedSend() {
+      frequency_counter_ ++;
+      return frequency_counter_ > frequency_;
     }
 
     void initiateRead() {
@@ -74,6 +88,9 @@ class SDORequest {
       memcpy(&value, data, sizeof(uint16_t));
 
       slave_->processSDO(index_, value);
+
+      // Clear the state
+      frequency_counter_ = 0;
     }
 
     uint16_t getIndex() const { return index_; }
@@ -85,6 +102,8 @@ class SDORequest {
     uint16_t index_;
     uint8_t subindex_;
     EcSlave* slave_;
+    int frequency_counter_;
+    int frequency_;
 };
 
 
