@@ -98,7 +98,6 @@ void EcMaster::addSlave(uint16_t alias, uint16_t position, EcSlave * slave)
 
   // check and setup dc
 
-  if (slave->assign_activate_dc_sync()) {
     struct timespec t;
     clock_gettime(CLOCK_MONOTONIC, &t);
     ecrt_master_application_time(master_, EC_NEWTIMEVAL2NANO(t));
@@ -109,7 +108,6 @@ void EcMaster::addSlave(uint16_t alias, uint16_t position, EcSlave * slave)
       interval_ - (t.tv_nsec % (interval_)),
       0,
       0);
-  }
 
   slave_info_.push_back(slave_info);
 
@@ -319,7 +317,7 @@ void EcMaster::readData(uint32_t domain)
       (entry.slave)->processData(i, domain_info->domain_pd + entry.offset[i]);
     }
   }
-
+  /*
   // Process completed SDO requests
   for (auto &sdo_request : sdo_requests_) {
     // Only send a request at the set frequency
@@ -336,7 +334,7 @@ void EcMaster::readData(uint32_t domain)
       }
     }
   }
-
+  */
   ++update_counter_;
 }
 
