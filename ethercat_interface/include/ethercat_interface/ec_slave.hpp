@@ -41,6 +41,8 @@ public:
   virtual const ec_sync_info_t * syncs() {return NULL;}
   virtual bool initialized() {return true;}
   virtual void set_state_is_operational(bool value) {is_operational_ = value;}
+  virtual void set_state(uint8_t value) { current_state_ = value;}
+  virtual uint8_t get_state() const {return current_state_;}
   /** Assign activate DC synchronization. return activate word*/
   virtual int assign_activate_dc_sync() {return 0x00;}
   /** number of elements in the syncs array. */
@@ -73,6 +75,7 @@ protected:
   std::vector<double> * command_interface_ptr_;
   std::unordered_map<std::string, std::string> paramters_;
   bool is_operational_ = false;
+  uint8_t current_state_ = 0;
 };
 }  // namespace ethercat_interface
 #endif  // ETHERCAT_INTERFACE__EC_SLAVE_HPP_

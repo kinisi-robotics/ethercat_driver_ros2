@@ -528,6 +528,11 @@ void EcMaster::checkSlaveStates()
       printf("Slave: %soperational.\n", s.operational ? "" : "Not ");
       slave.slave->set_state_is_operational(s.operational ? true : false);
     }
+
+    if (master_state_.link_up) {
+      slave.slave->set_state(s.al_state);
+    }
+
     slave.config_state = s;
   }
 }
