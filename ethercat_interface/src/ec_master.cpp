@@ -519,7 +519,7 @@ void EcMaster::checkSlaveStates()
 
     if (s.al_state != slave.config_state.al_state) {
       // this spams the terminal at initialization.
-      printf("Slave: State 0x%02X.\n", s.al_state);
+      // printf("Slave: State 0x%02X.\n", s.al_state);
     }
     if (s.online != slave.config_state.online) {
       printf("Slave: %s.\n", s.online ? "online" : "offline");
